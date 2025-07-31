@@ -1,6 +1,6 @@
-const express = require('express');
-const cors = require('cors');
-const { YoutubeTranscript } = require('@danielxceron/youtube-transcript');
+import express from 'express';
+import cors from 'cors';
+import { YoutubeTranscript } from '@danielxceron/youtube-transcript';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -13,7 +13,6 @@ app.get('/api/transcript/:videoId', async (req, res) => {
     const { videoId } = req.params;
     console.log(`Attempting to fetch transcript for video ID: ${videoId}`);
     
-    // The new library can handle full URLs or just video IDs
     const transcript = await YoutubeTranscript.fetchTranscript(videoId);
     console.log(`Transcript fetched successfully. Parts: ${transcript.length}`);
     
