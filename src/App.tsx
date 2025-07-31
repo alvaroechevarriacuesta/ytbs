@@ -7,6 +7,12 @@ import {
   EchoTokenPurchase,
 } from '@zdql/echo-react-sdk';
 import { useState } from 'react';
+import { Button } from './components/ui/button';
+import { Input } from './components/ui/input';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './components/ui/card';
+import { Progress } from './components/ui/progress';
+import { Badge } from './components/ui/badge';
+import { Loader2, Play, Star, FileText, Lightbulb, Youtube, Zap } from 'lucide-react';
 
 const echoConfig = {
   appId: '0cccf30d-52d7-46af-8621-5ed050e17973',
@@ -19,52 +25,11 @@ interface VideoAnalysis {
   ratingExplanation: string;
 }
 
-// Animated Loading Component
+// Loading Spinner Component
 const LoadingSpinner = () => (
-  <div style={{
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '1rem',
-    padding: '2rem',
-    color: '#6c757d'
-  }}>
-    <div style={{
-      width: '20px',
-      height: '20px',
-      border: '3px solid #f3f3f3',
-      borderTop: '3px solid #007bff',
-      borderRadius: '50%',
-      animation: 'spin 1s linear infinite'
-    }} />
-    <span style={{ fontSize: '1.1rem' }}>Analyzing your video...</span>
-    <style>{`
-      @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-      }
-    `}</style>
-  </div>
-);
-
-// Progress Bar Component
-const ProgressBar = ({ progress }: { progress: number }) => (
-  <div style={{
-    width: '100%',
-    height: '8px',
-    backgroundColor: '#e9ecef',
-    borderRadius: '4px',
-    overflow: 'hidden',
-    marginBottom: '1rem'
-  }}>
-    <div style={{
-      width: `${progress}%`,
-      height: '100%',
-      backgroundColor: '#007bff',
-      borderRadius: '4px',
-      transition: 'width 0.3s ease',
-      background: 'linear-gradient(90deg, #007bff, #0056b3)'
-    }} />
+  <div className="flex items-center justify-center gap-4 p-8 text-muted-foreground">
+    <Loader2 className="h-6 w-6 animate-spin" />
+    <span className="text-lg">Analyzing your video...</span>
   </div>
 );
 
@@ -73,104 +38,59 @@ const RatingStars = ({ rating }: { rating: number }) => {
   const stars: React.ReactElement[] = [];
   for (let i = 1; i <= 10; i++) {
     stars.push(
-      <span 
+      <Star 
         key={i} 
-        style={{ 
-          color: i <= rating ? '#FFD700' : '#e9ecef',
-          fontSize: '1.5rem',
-          transition: 'color 0.3s ease',
-          cursor: 'default'
-        }}
-      >
-        ★
-      </span>
+        className={`h-6 w-6 transition-colors ${
+          i <= rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
+        }`}
+      />
     );
   }
-  return <div style={{ letterSpacing: '2px' }}>{stars}</div>;
+  return <div className="flex gap-1">{stars}</div>;
 };
 
 // Analysis Card Component
 const AnalysisCard = ({ analysis }: { analysis: VideoAnalysis }) => (
-  <div style={{
-    backgroundColor: 'white',
-    borderRadius: '16px',
-    padding: '2rem',
-    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-    border: '1px solid #e9ecef',
-    animation: 'slideIn 0.5s ease-out'
-  }}>
-    <style>{`
-      @keyframes slideIn {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
-    `}</style>
-    
-    <div style={{ marginBottom: '2rem' }}>
-      <h4 style={{ 
-        color: '#2c3e50', 
-        marginBottom: '1rem',
-        fontSize: '1.4rem',
-        fontWeight: '600',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '0.5rem'
-      }}>
-        📝 Summary
-      </h4>
-      <p style={{ 
-        lineHeight: '1.7', 
-        fontSize: '1rem',
-        color: '#495057',
-        backgroundColor: '#f8f9fa',
-        padding: '1rem',
-        borderRadius: '8px',
-        border: '1px solid #e9ecef'
-      }}>
-        {analysis.summary}
-      </p>
-    </div>
-    
-    <div style={{ marginBottom: '2rem' }}>
-      <h4 style={{ 
-        color: '#2c3e50', 
-        marginBottom: '0.5rem',
-        fontSize: '1.4rem',
-        fontWeight: '600',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '0.5rem'
-      }}>
-        ⭐ Rating: {analysis.rating}/10
-      </h4>
-      <RatingStars rating={analysis.rating} />
-    </div>
-    
-    <div>
-      <h4 style={{ 
-        color: '#2c3e50', 
-        marginBottom: '1rem',
-        fontSize: '1.4rem',
-        fontWeight: '600',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '0.5rem'
-      }}>
-        💡 Rating Explanation
-      </h4>
-      <p style={{ 
-        lineHeight: '1.7',
-        fontSize: '1rem',
-        color: '#495057',
-        backgroundColor: '#f8f9fa',
-        padding: '1rem',
-        borderRadius: '8px',
-        border: '1px solid #e9ecef'
-      }}>
-        {analysis.ratingExplanation}
-      </p>
-    </div>
-  </div>
+  <Card className="animate-in slide-in-from-bottom-4 duration-500">
+    <CardHeader>
+      <CardTitle className="flex items-center gap-2">
+        <Zap className="h-6 w-6 text-primary" />
+        Analysis Complete!
+      </CardTitle>
+      <CardDescription>
+        Here's what AI discovered about your video
+      </CardDescription>
+    </CardHeader>
+    <CardContent className="space-y-6">
+      <div className="space-y-3">
+        <div className="flex items-center gap-2">
+          <FileText className="h-5 w-5 text-muted-foreground" />
+          <h4 className="text-lg font-semibold">Summary</h4>
+        </div>
+        <p className="text-muted-foreground leading-relaxed bg-muted/50 p-4 rounded-lg">
+          {analysis.summary}
+        </p>
+      </div>
+      
+      <div className="space-y-3">
+        <div className="flex items-center gap-2">
+          <Star className="h-5 w-5 text-muted-foreground" />
+          <h4 className="text-lg font-semibold">Rating: {analysis.rating}/10</h4>
+        </div>
+        <RatingStars rating={analysis.rating} />
+      </div>
+      
+      <div className="space-y-3">
+        <div className="flex items-center gap-2">
+          <Lightbulb className="h-5 w-5 text-muted-foreground" />
+          <h4 className="text-lg font-semibold">Rating Explanation</h4>
+        </div>
+        <p className="text-muted-foreground leading-relaxed bg-muted/50 p-4 rounded-lg">
+          {analysis.ratingExplanation}
+        </p>
+      </div>
+    </CardContent>
+  </Card>
 );
 
 // URL Input Component
@@ -187,105 +107,37 @@ const URLInput = ({
   isLoading: boolean;
   isAuthenticated: boolean;
 }) => (
-  <div style={{
-    display: 'flex',
-    gap: '1rem',
-    marginBottom: '2rem',
-    flexDirection: 'column',
-    alignItems: 'stretch'
-  }}>
-    <div style={{
-      position: 'relative',
-      display: 'flex',
-      alignItems: 'center'
-    }}>
-      <span style={{
-        position: 'absolute',
-        left: '1rem',
-        color: '#6c757d',
-        fontSize: '1.2rem'
-      }}>
-        🔗
-      </span>
-      <input 
+  <div className="space-y-4">
+    <div className="relative">
+      <Youtube className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+      <Input 
         type="text" 
         value={value} 
         onChange={(e) => onChange(e.target.value)}
         placeholder="Paste your YouTube URL here..."
-        style={{ 
-          flex: 1, 
-          padding: '1rem 1rem 1rem 3rem',
-          border: '2px solid #e9ecef',
-          borderRadius: '12px',
-          fontSize: '1rem',
-          transition: 'all 0.3s ease',
-          outline: 'none',
-          backgroundColor: isAuthenticated ? 'white' : '#f8f9fa'
-        }}
-        onFocus={(e) => {
-          e.target.style.borderColor = '#007bff';
-          e.target.style.boxShadow = '0 0 0 3px rgba(0, 123, 255, 0.1)';
-        }}
-        onBlur={(e) => {
-          e.target.style.borderColor = '#e9ecef';
-          e.target.style.boxShadow = 'none';
-        }}
+        className="pl-10 h-12 text-base"
         disabled={!isAuthenticated}
         onKeyPress={(e) => e.key === 'Enter' && onSubmit()}
       />
     </div>
-    <button 
+    <Button 
       onClick={onSubmit}
       disabled={isLoading || !isAuthenticated}
-      style={{ 
-        padding: '1rem 2rem',
-        backgroundColor: isLoading || !isAuthenticated ? '#6c757d' : '#007bff',
-        color: 'white',
-        border: 'none',
-        borderRadius: '12px',
-        cursor: isLoading || !isAuthenticated ? 'not-allowed' : 'pointer',
-        fontSize: '1rem',
-        fontWeight: '600',
-        transition: 'all 0.3s ease',
-        minHeight: '50px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: '0.5rem'
-      }}
-      onMouseEnter={(e) => {
-        if (!isLoading && isAuthenticated) {
-          e.currentTarget.style.backgroundColor = '#0056b3';
-          e.currentTarget.style.transform = 'translateY(-2px)';
-          e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 123, 255, 0.3)';
-        }
-      }}
-      onMouseLeave={(e) => {
-        if (!isLoading && isAuthenticated) {
-          e.currentTarget.style.backgroundColor = '#007bff';
-          e.currentTarget.style.transform = 'translateY(0)';
-          e.currentTarget.style.boxShadow = 'none';
-        }
-      }}
+      size="lg"
+      className="w-full h-12 text-base font-semibold"
     >
       {isLoading ? (
         <>
-          <div style={{
-            width: '16px',
-            height: '16px',
-            border: '2px solid #ffffff40',
-            borderTop: '2px solid white',
-            borderRadius: '50%',
-            animation: 'spin 1s linear infinite'
-          }} />
+          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
           Analyzing...
         </>
       ) : (
         <>
-          🚀 Analyze Video
+          <Play className="mr-2 h-5 w-5" />
+          Analyze Video
         </>
       )}
-    </button>
+    </Button>
   </div>
 );
 
@@ -392,10 +244,26 @@ function ChatInterface() {
       const content = response.choices[0].message.content || '';
       
       try {
-        const analysis = JSON.parse(content);
+        // Clean the content to extract JSON from code blocks
+        let jsonContent = content.trim();
+        
+        // Remove markdown code block syntax if present
+        if (jsonContent.startsWith('```json')) {
+          jsonContent = jsonContent.replace(/^```json\s*/, '');
+        }
+        if (jsonContent.startsWith('```')) {
+          jsonContent = jsonContent.replace(/^```\s*/, '');
+        }
+        if (jsonContent.endsWith('```')) {
+          jsonContent = jsonContent.replace(/\s*```$/, '');
+        }
+        
+        const analysis = JSON.parse(jsonContent);
         setVideoAnalysis(analysis);
         setProgress(100);
       } catch (parseError) {
+        console.error('JSON parsing error:', parseError);
+        console.log('Raw content:', content);
         setVideoAnalysis({
           summary: content,
           rating: 7,
@@ -415,133 +283,120 @@ function ChatInterface() {
   }
   
   return (
-    <div style={{
-      display: 'flex', 
-      flexDirection: 'column', 
-      alignItems: 'stretch',
-      gap: '2rem',
-      padding: '2rem',
-      minHeight: '100vh',
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
-    }}>
-      {/* Header */}
-      <div style={{
-        textAlign: 'center',
-        marginBottom: '2rem',
-        color: 'white'
-      }}>
-        <h1 style={{
-          fontSize: '3rem',
-          marginBottom: '0.5rem',
-          fontWeight: '800',
-          textShadow: '0 2px 4px rgba(0,0,0,0.3)',
-          background: 'linear-gradient(45deg, #fff, #f0f0f0)',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-          backgroundClip: 'text'
-        }}>
-          🎯 YouTube Video Analyzer
-        </h1>
-        <p style={{
-          fontSize: '1.2rem',
-          margin: '0',
-          opacity: '0.9',
-          fontWeight: '300'
-        }}>
-          Transform any YouTube video into AI-powered insights
-        </p>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+      <div className="container mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <div className="p-3 bg-primary/10 rounded-full">
+              <Youtube className="h-8 w-8 text-primary" />
+            </div>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
+              YouTube Video Analyzer
+            </h1>
+          </div>
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            Transform any YouTube video into AI-powered insights with our advanced analysis tool
+          </p>
+        </div>
 
-      {/* Authentication */}
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        marginBottom: '2rem'
-      }}>
-        {isAuthenticated ? <EchoTokenPurchase /> : <EchoSignIn />}
-      </div>
-      
-      {/* Main Analysis Container */}
-      <div style={{
-        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-        borderRadius: '20px',
-        padding: '2.5rem',
-        width: '100%',
-        maxWidth: '95%',
-        boxShadow: '0 20px 40px rgba(0, 0, 0, 0.1)',
-        backdropFilter: 'blur(10px)',
-        border: '1px solid rgba(255, 255, 255, 0.2)'
-      }}>
-        <h3 style={{
-          fontSize: '2rem',
-          color: '#2c3e50',
-          marginBottom: '2rem',
-          textAlign: 'center',
-          fontWeight: '700'
-        }}>
-          🚀 Start Your Analysis
-        </h3>
+        {/* Authentication */}
+        <div className="flex justify-center mb-8">
+          {isAuthenticated ? <EchoTokenPurchase /> : <EchoSignIn />}
+        </div>
         
-        {!isAuthenticated && (
-          <div style={{ 
-            backgroundColor: '#fff3cd', 
-            color: '#856404',
-            padding: '1rem',
-            borderRadius: '12px',
-            marginBottom: '2rem',
-            border: '1px solid #ffeaa7',
-            textAlign: 'center',
-            fontSize: '1.1rem'
-          }}>
-            ⚠️ Please sign in to unlock video analysis features
-          </div>
-        )}
-        
-        <URLInput 
-          value={youtubeUrl}
-          onChange={setYoutubeUrl}
-          onSubmit={analyzeVideo}
-          isLoading={isLoading}
-          isAuthenticated={isAuthenticated}
-        />
+        {/* Main Analysis Container */}
+        <Card className="max-w-4xl mx-auto">
+          <CardHeader className="text-center">
+            <CardTitle className="text-3xl flex items-center justify-center gap-2">
+              <Zap className="h-8 w-8 text-primary" />
+              Start Your Analysis
+            </CardTitle>
+            <CardDescription className="text-lg">
+              Paste a YouTube URL below to get instant AI-powered insights
+            </CardDescription>
+          </CardHeader>
+          
+          <CardContent className="space-y-6">
+            {!isAuthenticated && (
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-center">
+                <div className="flex items-center justify-center gap-2 text-yellow-800">
+                  <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse" />
+                  Please sign in to unlock video analysis features
+                </div>
+              </div>
+            )}
+            
+            <URLInput 
+              value={youtubeUrl}
+              onChange={setYoutubeUrl}
+              onSubmit={analyzeVideo}
+              isLoading={isLoading}
+              isAuthenticated={isAuthenticated}
+            />
 
-        {isLoading && (
-          <div style={{ marginBottom: '2rem' }}>
-            <ProgressBar progress={progress} />
-            <LoadingSpinner />
-          </div>
-        )}
+            {isLoading && (
+              <div className="space-y-4">
+                <Progress value={progress} className="h-2" />
+                <LoadingSpinner />
+              </div>
+            )}
 
-        {error && (
-          <div style={{ 
-            color: '#721c24', 
-            marginBottom: '2rem',
-            padding: '1rem',
-            backgroundColor: '#f8d7da',
-            borderRadius: '12px',
-            border: '1px solid #f5c6cb',
-            textAlign: 'center',
-            fontSize: '1.1rem'
-          }}>
-            ❌ {error}
-          </div>
-        )}
+            {error && (
+              <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4 text-center">
+                <div className="flex items-center justify-center gap-2 text-destructive">
+                  <div className="w-2 h-2 bg-destructive rounded-full" />
+                  {error}
+                </div>
+              </div>
+            )}
 
-        {videoAnalysis && (
-          <div style={{ marginTop: '2rem' }}>
-            <h4 style={{
-              fontSize: '1.8rem',
-              color: '#2c3e50',
-              marginBottom: '1.5rem',
-              textAlign: 'center',
-              fontWeight: '600'
-            }}>
-              🎉 Analysis Complete!
-            </h4>
-            <AnalysisCard analysis={videoAnalysis} />
-          </div>
-        )}
+            {videoAnalysis && (
+              <div className="mt-8">
+                <AnalysisCard analysis={videoAnalysis} />
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Features Section */}
+        <div className="mt-16 grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+          <Card className="text-center">
+            <CardContent className="pt-6">
+              <div className="p-3 bg-blue-100 rounded-full w-fit mx-auto mb-4">
+                <FileText className="h-6 w-6 text-blue-600" />
+              </div>
+              <h3 className="font-semibold mb-2">Smart Summaries</h3>
+              <p className="text-sm text-muted-foreground">
+                Get comprehensive summaries of any YouTube video content
+              </p>
+            </CardContent>
+          </Card>
+          
+          <Card className="text-center">
+            <CardContent className="pt-6">
+              <div className="p-3 bg-yellow-100 rounded-full w-fit mx-auto mb-4">
+                <Star className="h-6 w-6 text-yellow-600" />
+              </div>
+              <h3 className="font-semibold mb-2">AI Ratings</h3>
+              <p className="text-sm text-muted-foreground">
+                Receive intelligent ratings and explanations for video quality
+              </p>
+            </CardContent>
+          </Card>
+          
+          <Card className="text-center">
+            <CardContent className="pt-6">
+              <div className="p-3 bg-green-100 rounded-full w-fit mx-auto mb-4">
+                <Zap className="h-6 w-6 text-green-600" />
+              </div>
+              <h3 className="font-semibold mb-2">Instant Analysis</h3>
+              <p className="text-sm text-muted-foreground">
+                Get results in seconds with our advanced AI technology
+              </p>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );
